@@ -11,7 +11,22 @@ module.exports = {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
       },
+      margin: {
+        tomato: "20px",
+      },
+      borderRadius: {
+        "sexy-name": "11.11px",
+      },
     },
   },
   plugins: [],
 } 
+
+// theme: {
+//   extend: {
+//     colors: {
+//       background: 'var(--background)',
+//       foreground: 'var(--foreground)',
+//     },
+//   },
+// },
