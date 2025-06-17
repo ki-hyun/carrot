@@ -1,22 +1,29 @@
+"use client"
+
 import FormButton from "@/components/form-btn";
 import FormInput from "@/components/form-input";
 import SocialLogin from "@/components/social-login";
+// import { redirect } from "next/dist/server/api-utils";
+import { redirect } from "next/navigation";
 
-async function handleForm(formData: FormData) {
-  "use server";
+// import { useFormState } from "react-dom";
+import { handleForm } from "./actions";
 
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-  console.log("email:",formData.get("email"), "password:",formData.get("password"));
-}
+import { useActionState } from "react";
+
+
 
 export default function LogIn() {
+
+  const [state, action] = useActionState(handleForm, null);
+
   return (
     <div className="flex flex-col gap-10 py-8 px-6">
       <div className="flex flex-col gap-2 *:font-medium">
         <h1 className="text-2xl">안녕하세요!</h1>
         <h2 className="text-xl">Log in with email and password.</h2>
       </div>
-      <form action={handleForm} className="flex flex-col gap-3">
+      <form action={action} className="flex flex-col gap-3">
         <FormInput
           name="email"
           type="email"
@@ -29,7 +36,7 @@ export default function LogIn() {
           type="password"
           placeholder="Password"
           required
-          errors={[]}
+          errors={state?.errors ?? []}
         />
         {/* <FormButton loading={false} text="Log in" /> */}
         <FormButton text="Log in" />
