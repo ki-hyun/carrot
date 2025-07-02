@@ -58,8 +58,17 @@ export async function createAccount(prevState: any, formData: FormData) {
     console.log(result.error.flatten())
 
     return result.error.flatten();
-  } else {
+  } else {// 계정 만들기
     console.log(result.data);
+  
+  
+  
+  
+  
+  
+  
+  
+  
   }
 
   // 에러나옴
