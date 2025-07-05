@@ -1,58 +1,81 @@
 "use server";
 
-// import { redirect } from "next/navigation";
-
-// export async function handleForm(prevState: any, formData: FormData) {
-//   console.log("prevstate:",prevState);
-  
-//   // email 값 추출
-//   // const email = formData.get('email');
-//   // console.log("Email:", email);
-
-//   // FormData의 모든 키-값 쌍 출력
-//   console.log("=== FormData 모든 필드 ===");
-//   for (const [key, value] of formData.entries()) {
-//     console.log(`${key}: ${value}`);
-//   }
-//   console.log("=======================");
-
-//   await new Promise((resolve) => setTimeout(resolve, 1000));
-
-//   // redirect("/")
-
-//   return {
-//     errors: ["wrong password", "password too short"],
-//   };
-// }
-
-
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
   PASSWORD_REGEX_ERROR,
 } from "@/lib/constants";
+import bcrypt from "bcrypt";
 import { z } from "zod";
+import db from "@/lib/db";
+import getSession from "@/lib/session";
+import { redirect } from "next/navigation";
+
+const checkEmailExists = async (email: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      id: true,
+    },
+  });
+  return Boolean(user);
+};
 
 const formSchema = z.object({
-  email: z.string().email().toLowerCase(),
+  email: z.string().email().toLowerCase()
+    .refine(checkEmailExists, "없는 이메일이네"),
   password: z
     .string({
       required_error: "Password is required",
     })
-    .min(PASSWORD_MIN_LENGTH)
-    .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
+    // .min(PASSWORD_MIN_LENGTH)
+    // .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
 });
+
 
 export async function logIn(prevState: any, formData: FormData) {
   const data = {
     email: formData.get("email"),
     password: formData.get("password"),
   };
-  const result = formSchema.safeParse(data);
-  if (!result.success) {
+  const result = await formSchema.safeParseAsync(data);
+  if (!result.success) { /////////////////////////// 로그인 양식 실패
     console.log(result.error.flatten());
     return result.error.flatten();
-  } else {
-    console.log(result.data);
+  } else { ///////////////////////////////////////// 입력정상 로그인 시도
+    console.log("login -----------------------------------\n"+result.data);
+
+    const user = await db.user.findUnique({
+      where: {
+        email: result.data.email,
+      },
+      select: {
+        id: true,
+        password: true,
+      },
+    });
+
+    const ok = await bcrypt.compare(
+      result.data.password,
+      user!.password ?? "xxxx"
+    );
+
+    if (ok) {
+      const session = await getSession();
+      session.id = user!.id;
+      await session.save();
+
+      redirect("/profile");
+    } else {
+      return {
+        fieldErrors: {
+          password: ["Wrong password."],
+          email: [],
+        },
+      };
+    }
+  
   }
 }

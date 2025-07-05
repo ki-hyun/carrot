@@ -1,10 +1,17 @@
 "use server";
 import { z } from "zod";
+import bcrypt from "bcrypt";
+
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX_ERROR,
 } from "@/lib/constants";
 import db from "@/lib/db";
+import { getIronSession } from "iron-session";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import getSession from "@/lib/session";
+
 
 // const passwordRegex = new RegExp(
 //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*?[#?!@$%^&*-]).+$/
@@ -89,7 +96,7 @@ export async function createAccount(prevState: any, formData: FormData) {
   console.log("입력된 데이터:", data);
 
   // const result = formSchema.safeParse(data);
-  const result = await formSchema.safeParseAsync(data);
+  const result = await formSchema.safeParseAsync(data);  
   if (!result.success) {
     console.log("=== Zod 에러 상세 정보 ===");
     console.log("에러 메시지:", result.error.message);
@@ -106,59 +113,32 @@ export async function createAccount(prevState: any, formData: FormData) {
     return result.error.flatten();
     
   } else {// 계정 만들기
+    console.log("result-------------------------------------------");
     console.log(result);
-  
-    // const user = await db.user.findUnique({
-    //   where: {
-    //     username: result.data.username,
-    //   },
-    //   select: {
-    //     id: true,
-    //   },
-    // });
-  
-    // console.log(user)
-    
-    // if(user) {
-  
-    //   return {
-    //     // errors: {
-    //     //   username: ["이미 존재하는 아이디입니다."],
-    //     // },
-        
-    //     formErrors: [],
-    //     fieldErrors: { username: [ '이미 있는 아이디' ] }
-    //   };
+    // console.log(cookies());
 
-    // }else{
-    //   // const newUser = await db.user.create({
-    //   //   data: {
-    //   //     username: result.data.username,
-    //   //   },
-    //   // });
-    // }
-  
-
-    // const userEmail = await db.user.findUnique({
-    //   where: {
-    //     email: result.data.email,
-    //   },
-    //   select: {
-    //     id: true,
-    //   },
-    // });
-
-    // console.log(userEmail)
-
-    // if(userEmail) {
+    const hashedPassword = await bcrypt.hash(result.data.password, 11);
+    // console.log(hashedPassword)
+    const user = await db.user.create({
+      data: {
+        username: result.data.username,
+        email: result.data.email,
+        password: hashedPassword,
+      },
+      select: {
+        id: true,
+      },
+    });
 
 
-    // }else{
+    const session = await getSession();
+    session.id = user.id;
+    await session.save();
 
+    console.log("session------------------------------------------");
+    console.log(session)
 
-    // }
-
-
+    redirect("/profile")
 
   }
 
