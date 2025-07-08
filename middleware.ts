@@ -10,6 +10,8 @@ const publicOnlyUrls: Routes = {
   "/login": true,
   "/sms": true,
   "/create-account": true,
+  "/github/start": true,
+  "/github/complete": true,
 };
 
 export async function middleware(request: NextRequest) {
@@ -27,40 +29,20 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-
-  // 
-  // if(-1 == request.nextUrl.pathname.indexOf('.')){
-  //   console.log("middleware-----------------------------------------------")
-  //   console.log(request.nextUrl.pathname)
-  //   console.log(session);
-  // }
-
-
   console.log("middleware-----------------------------------------------")
   console.log(request.nextUrl.pathname)
   console.log(session);
 
-
-
-
-
-
-
-
-
   // if (request.nextUrl.pathname === "/profile") {
   //   return NextResponse.redirect(new URL("/", request.url));
-
   //   // return Response.json({
   //   //   error:" you are not allowed here!",
   //   // })
-
   // }
-
-
 
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  // matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
