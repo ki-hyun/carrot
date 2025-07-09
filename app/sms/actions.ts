@@ -108,6 +108,18 @@ export async function smsLogIn(prevState: ActionState, formData: FormData) {
           },
         },
       });
+
+      // sms 보내는 코드
+      // const client = twilio(
+      //   process.env.TWILIO_ACCOUNT_SID,
+      //   process.env.TWILIO_AUTH_TOKEN
+      // );
+      // await client.messages.create({
+      //   body: `Your Karrot verification code is: ${token}`,
+      //   from: process.env.TWILIO_PHONE_NUMBER!,
+      //   to: process.env.MY_PHONE_NUMBER!,
+      // });
+
       return {
         token: true,
       };
@@ -134,7 +146,7 @@ export async function smsLogIn(prevState: ActionState, formData: FormData) {
           userId: true,
         },
       });
-      if(token){ // 사실 필요없음   await tokenSchema.safeParseAsync(token); 코드로 토큰 확인했음
+      if(!token){ // 사실 필요없음   await tokenSchema.safeParseAsync(token); 코드로 토큰 확인했음
         const resulterrortoken = {
           formErrors: ['토큰 에러 안맞음'],
           fieldErrors: {},
