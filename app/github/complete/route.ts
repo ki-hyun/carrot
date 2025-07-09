@@ -6,7 +6,10 @@ import { NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
   if (!code) {
-    return notFound();
+    // return notFound();
+    return new Response(null, {
+      status: 400,
+    });
   }
   const accessTokenParams = new URLSearchParams({
     client_id: process.env.GITHUB_CLIENT_ID!,
@@ -24,12 +27,14 @@ export async function GET(request: NextRequest) {
     },
   });
   // const accessTokenData = await accessTokenResponse.json();
-  const { error, access_token } = await accessTokenResponse.json();
+  const { error, access_token } = await accessTokenResponse.json(); // 에러
   if (error) {
     return new Response(null, {
       status: 400,
     });
   }
+  // 에러 없음 진행
+
   console.log("access_token:\n",access_token)
 
   const userProfileResponse = await fetch("https://api.github.com/user", {
@@ -41,6 +46,16 @@ export async function GET(request: NextRequest) {
 
   // const _userProfileResponse = await userProfileResponse.json();
   const { id, avatar_url, login } = await userProfileResponse.json();
+
+  const userProfileResponseEmail = await fetch("https://api.github.com/user/emails", {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+    cache: "no-cache",
+  });
+  const _userProfileResponseEmail = await userProfileResponseEmail.json();
+  console.log("email-----------------------------\n",_userProfileResponseEmail)
+
 
   const user = await db.user.findUnique({
     where: {
@@ -58,7 +73,7 @@ export async function GET(request: NextRequest) {
     return redirect("/profile");
   }
 
-  // 혹시 이메일로 가입된 아이디 중에 중복 username 있는지 확인
+  // 혹시 이메일로 가입된 아이디 중에 중복 username 있는지 확인   이미 있다면 _123 이런시으로 부여
   const newUser = await db.user.create({ // 새로운 유저 등록
     data: {
       username: login,
