@@ -1,6 +1,8 @@
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { notFound, redirect } from "next/navigation";
+import ListProduct from "@/components/list-product";
+
 
 async function getUser() {
   const session = await getSession();
@@ -20,7 +22,25 @@ async function getUser() {
   notFound();
 }
 
-export default async function Profile() {
+async function getProducts() {
+  // await new Promise((resolve) => setTimeout(resolve, 3000));
+
+  const products = await db.product.findMany({
+    select: {
+      title: true,
+      price: true,
+      created_at: true,
+      photo: true,
+      id: true,
+    },
+  });
+  return products;
+
+}
+
+export default async function Products() {
+  const products = await getProducts();
+  
   const user = await getUser();
   const logOut = async () => {
     "use server";
@@ -34,6 +54,12 @@ export default async function Profile() {
       <form action={logOut}>
         <button>Log out</button>
       </form>
+
+      <div className="p-5 flex flex-col gap-5">
+      {products.map((product) => (
+        <ListProduct key={product.id} {...product} />
+      ))}
+      </div>
     </div>
   );
 }
