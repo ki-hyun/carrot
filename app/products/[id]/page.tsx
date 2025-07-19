@@ -57,7 +57,7 @@ export default async function ProductDetail({
   params: { id: string };
 }) {
   
-  await wait();
+  // await wait();
 
   const id = Number(params.id);
   if (isNaN(id)) {
@@ -75,7 +75,8 @@ export default async function ProductDetail({
   return (
     <div>
       <div className="relative aspect-square">
-        <Image fill src={product.photo} alt={product.title} />
+        {/* <Image fill src={product.photo} alt={product.title} /> */}
+        <img src={product.photo} alt={product.title} />
       </div>
       <div className="p-5 flex items-center gap-3 border-b border-neutral-700">
         {/* <div className="size-10 rounded-full"> */}
