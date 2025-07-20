@@ -104,6 +104,12 @@ export default async function Products() {
       >
         <PlusIcon className="size-10" />
       </Link>
+      <Link
+        href="/products/addcloud"
+        className="bg-yellow-500 flex items-center justify-center rounded-full size-16 fixed bottom-44 right-8 text-white transition-colors hover:bg-yellow-400"
+      >
+        <PlusIcon className="size-10" />
+      </Link>
     </div>
   );
 }

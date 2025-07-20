@@ -2,14 +2,18 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'avatars.githubusercontent.com',
-        port: '',
-        pathname: '/**',
-      },
-    ],
+    // remotePatterns: [
+    //   {
+    //     protocol: 'https',
+    //     hostname: 'avatars.githubusercontent.com',
+    //     port: '',
+    //     pathname: '/**',
+    //   },
+    // ],
+
+    // 또는
+    remotePatterns: [],
+    domains: ['*'], 
   },
 };
 
