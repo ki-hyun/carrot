@@ -70,9 +70,10 @@ import ProductList from "@/components/product-list";
 import db from "@/lib/db";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { Prisma } from "@prisma/client";
-import { unstable_cache } from "next/cache";
+import { unstable_cache, revalidatePath  } from "next/cache";
 import Link from "next/link";
 
+// const getCachedProducts = unstable_cache(getInitialProducts, ["home-products"], {revalidate: 60,}); // 60 초 지나서 호출하면 다시 캐싱
 const getCachedProducts = unstable_cache(getInitialProducts, ["home-products"]);
 
 async function getInitialProducts() {
@@ -100,9 +101,16 @@ export type InitialProducts = Prisma.PromiseReturnType<
 export default async function Products() {
   // const initialProducts = await getInitialProducts();
   const initialProducts = await getCachedProducts();
+  const revalidate = async () => {
+    "use server";
+    revalidatePath("/home"); // 이 주소 실행할때 연결된 모든 캐시 새로 고침
+  };
 
   return (
     <div>
+      <form action={revalidate}>
+        <button>Revalidate</button>
+      </form>
       <ProductList initialProducts={initialProducts} />
       <Link
         href="/products/add"

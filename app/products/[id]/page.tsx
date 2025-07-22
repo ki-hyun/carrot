@@ -5,6 +5,7 @@ import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { unstable_cache, revalidateTag } from "next/cache";
 
 async function wait() {
   await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -19,6 +20,7 @@ async function getIsOwner(userId: number) {
 }
 
 async function getProduct(id: number) {
+  console.log("product +++++");
   const product = await db.product.findUnique({
     where: {
       id,
@@ -35,6 +37,34 @@ async function getProduct(id: number) {
   return product;
 }
 
+const getCachedProduct = unstable_cache(getProduct, ["product-detail"], {
+  tags: ["product-detail", "xxxx"],
+});
+
+async function getProductTitle(id: number) {
+  console.log("getProductTitle +++++");
+  const product = await db.product.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      title: true,
+    },
+  });
+  return product;
+}
+
+const getCachedProductTitle = unstable_cache(getProductTitle, ["product-title"], {
+  tags: ["product-title", "xxxx"],
+});
+
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const product = await getCachedProductTitle(Number(params.id));
+  return {
+    title: product?.title,
+  };
+}
+
 export default async function ProductDetail({
   params,
 }: {
@@ -47,15 +77,19 @@ export default async function ProductDetail({
   if (isNaN(id)) {
     return notFound();
   }
-  const product = await getProduct(id);
+  const product = await getCachedProduct(id);
   if (!product) {
     return notFound();
   }
 
-  console.log("product===========================")
-  console.log(product)
+  // console.log("product===========================")
+  // console.log(product)
 
   const isOwner = await getIsOwner(product.userId);
+  const revalidate = async () => {
+    "use server";
+    revalidateTag("xxxx");
+  };
   return (
     <div>
       <div className="relative aspect-square">
@@ -74,7 +108,13 @@ export default async function ProductDetail({
         {/* <div className="size-10 rounded-full"> */}
         <div className="size-10 overflow-hidden rounded-full">
           {product.user.avatar !== null ? (
-            <Image
+            // <Image
+            //   src={product.user.avatar}
+            //   width={40}
+            //   height={40}
+            //   alt={product.user.username}
+            // />
+            <img
               src={product.user.avatar}
               width={40}
               height={40}
@@ -92,6 +132,13 @@ export default async function ProductDetail({
         <h1 className="text-2xl font-semibold">{product.title}</h1>
         <p>{product.description}</p>
       </div>
+
+      <form action={revalidate}>
+        <button className="bg-green-500 px-5 py-2.5 rounded-md text-white font-semibold">
+          Revalidate title cache
+        </button>
+      </form>
+
       <div className="fixed w-full bottom-0 left-0 p-5 pb-10 bg-neutral-800 flex justify-between items-center">
         <span className="font-semibold text-xl">
           {formatToWon(product.price)}원
