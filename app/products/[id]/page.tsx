@@ -2,14 +2,29 @@ import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { formatToWon } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
-import Image from "next/image";
+// import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { unstable_cache, revalidateTag } from "next/cache";
 
-async function wait() {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-}
+//// 이 함수 쓰면 정적 빌드하라고 요청함
+//// static 으로 빌드하려고 할때 미리 list 받아오기
+// export async function generateStaticParams() {
+//   const products = await db.product.findMany({
+//     select: {
+//       id: true,
+//     },
+//   });
+//   return products.map((product) => ({ id: product.id + "" }));
+// }
+
+////// 더 이상 동적 페이지 만들지 않음  미리 빌드안되어있는 페이지 호출시 404
+// export const dynamicParams = false;
+
+
+// async function wait() {
+//   await new Promise((resolve) => setTimeout(resolve, 2000));
+// }
 
 async function getIsOwner(userId: number) {
   const session = await getSession();
@@ -58,22 +73,29 @@ const getCachedProductTitle = unstable_cache(getProductTitle, ["product-title"],
   tags: ["product-title", "xxxx"],
 });
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const product = await getCachedProductTitle(Number(params.id));
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+
+  const { id: idString } = await params;
+  const id = Number(idString);
+
+  const product = await getCachedProductTitle(id);
   return {
     title: product?.title,
   };
 }
 
-export default async function ProductDetail({
-  params,
-}: {
-  params: { id: string };
-}) {
+// export default async function Products({
+//   params,
+// }: {
+//   params: { id: string };
+// }) {
   
+export default async function Products({ params }: { params: Promise<{ id: string }> }) {
   // await wait();
 
-  const id = Number(params.id);
+  const { id: idString } = await params;
+  const id = Number(idString);
+
   if (isNaN(id)) {
     return notFound();
   }
@@ -102,7 +124,6 @@ export default async function ProductDetail({
         /> */}
         {/* <img src={product.photo} alt={product.title} className="w-full h-full object-cover absolute top-0 left-0"/> */}
         <img src={product.photo} alt={product.title} className=""/>
-        
       </div>
       <div className="p-5 flex items-center gap-3 border-b border-neutral-700">
         {/* <div className="size-10 rounded-full"> */}

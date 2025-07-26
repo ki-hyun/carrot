@@ -30,34 +30,34 @@ const passwordRegex = new RegExp(
 );
 
 
-const checkUniqueUsername = async (username: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      username,
-    },
-    select: {
-      id: true,
-    },
-  });
-  // if (user) {
-  //   return false;
-  // } else {
-  //   return true;
-  // }
-  return !Boolean(user);
-};
+// const checkUniqueUsername = async (username: string) => {
+//   const user = await db.user.findUnique({
+//     where: {
+//       username,
+//     },
+//     select: {
+//       id: true,
+//     },
+//   });
+//   // if (user) {
+//   //   return false;
+//   // } else {
+//   //   return true;
+//   // }
+//   return !Boolean(user);
+// };
 
-const checkUniqueEmail = async (email: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-    },
-  });
-  return Boolean(user) === false;
-};
+// const checkUniqueEmail = async (email: string) => {
+//   const user = await db.user.findUnique({
+//     where: {
+//       email,
+//     },
+//     select: {
+//       id: true,
+//     },
+//   });
+//   return Boolean(user) === false;
+// };
 
 // const formSchema = z.object({
 //   username: z.string({
@@ -152,7 +152,8 @@ const formSchema = z
   });
 
 
-export async function createAccount(prevState: any, formData: FormData) {
+// export async function createAccount(prevState: any, formData: FormData) {
+export async function createAccount(prevState: unknown, formData: FormData) {
   console.log("createAccount")
 
   const data = {

@@ -3,7 +3,13 @@
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 
-export default function Modal({ params }: { params: { id: string } }) {
+// export default async function Modal({ params }: { params: Promise<{ id: string }> }) {
+
+//   // const { id: idString } = await params;
+//   // const id = Number(idString);
+
+export default function Modal() {
+    
   const router = useRouter();
   const onCloseClick = () => {
     router.back();

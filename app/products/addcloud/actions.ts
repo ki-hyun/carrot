@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import fs from "fs/promises";
+// import fs from "fs/promises";
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
@@ -21,7 +21,7 @@ const productSchema = z.object({
   }),
 });
 
-export async function uploadProduct(_: any, formData: FormData) {
+export async function uploadProduct(_: unknown, formData: FormData) {
   const data = {
     photo: formData.get("photo"),
     title: formData.get("title"),

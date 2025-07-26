@@ -1,10 +1,10 @@
 "use server";
 
-import {
-  PASSWORD_MIN_LENGTH,
-  PASSWORD_REGEX,
-  PASSWORD_REGEX_ERROR,
-} from "@/lib/constants";
+// import {
+//   PASSWORD_MIN_LENGTH,
+//   PASSWORD_REGEX,
+//   PASSWORD_REGEX_ERROR,
+// } from "@/lib/constants";
 import bcrypt from "bcrypt";
 import { z } from "zod";
 import db from "@/lib/db";
@@ -35,7 +35,7 @@ const formSchema = z.object({
 });
 
 
-export async function logIn(prevState: any, formData: FormData) {
+export async function logIn(prevState: unknown, formData: FormData) {
   const data = {
     email: formData.get("email"),
     password: formData.get("password"),
