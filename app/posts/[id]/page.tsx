@@ -45,19 +45,6 @@ const getCachedPost = unstable_cache(getPost, ["post-detail"], {
   revalidate: 60,
 });
 
-// async function getIsLiked(postId: number) {
-//   const session = await getSession();
-//   const like = await db.like.findUnique({
-//     where: {
-//       id: {
-//         postId,
-//         userId: session.id!,
-//       },
-//     },
-//   });
-//   return Boolean(like);
-// }
-
 async function getLikeStatus(postId: number, userId: number) {
   // const isLiked = await db.like.findFirst({
   //   where: { postId, userId },
@@ -85,38 +72,6 @@ function getCachedLikeStatus(postId: number, userId: number) {
   });
   return cachedOperation(postId, userId);
 }
-
-// async function getLikeStatus(postId: number) {
-//   const session = await getSession();
-//   const isLiked = await db.like.findUnique({
-//     where: {
-//       id: {
-//         postId,
-//         userId: session.id!,
-//       },
-//     },
-//   });
-//   const likeCount = await db.like.count({
-//     where: {
-//       postId,
-//     },
-//   });
-//   return {
-//     likeCount,
-//     isLiked: Boolean(isLiked),
-//   };
-// }
-
-// const getCachedLikeStatus = unstable_cache(getLikeStatus, ["product-like-status"], {
-//   tags: ["like-status"],
-// });
-
-// function getCachedLikeStatus(postId: number) {
-//   const cachedOperation = unstable_cache(getLikeStatus, ["product-like-status"], {
-//     tags: [`like-status-${postId}`],
-//   });
-//   return cachedOperation(postId);
-// }
 
 export default async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
   
@@ -207,10 +162,6 @@ export default async function PostDetail({ params }: { params: Promise<{ id: str
                 : "hover:bg-neutral-800"
             }`}          
           >
-            {/* <HandThumbUpIcon className="size-5" />
-            <span>공감하기 ({post._count.likes})</span>
-             */}
-
             {isLiked ? (
               <HandThumbUpIcon className="size-5" />
             ) : (
