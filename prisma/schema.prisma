@@ -32,8 +32,10 @@ model User {
   tokens     SMSToken[]
   products   Product[]
   posts      Post[]
-  Comment    Comment[]
-  Like       Like[]
+  comments   Comment[]
+  likes      Like[]
+  chat_rooms ChatRoom[]
+  messages   Message[]
 }
 
 model SMSToken {
@@ -97,4 +99,26 @@ model Like {
 
  // 고유
   @@id(name: "id", [userId, postId])
+}
+
+model ChatRoom {
+  id    String @id @default(cuid())
+  users User[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  messages   Message[]
+}
+
+model Message {
+  id      Int    @id @default(autoincrement())
+  payload String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  room       ChatRoom @relation(fields: [chatRoomId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+  chatRoomId String
+  userId     Int
 }

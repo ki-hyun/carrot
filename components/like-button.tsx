@@ -18,14 +18,14 @@ export default function LikeButton({
 }: LikeButtonProps) {
   const [state, reducerFn] = useOptimistic(
     { isLiked, likeCount },
-    (previousState, payload) => ({
+    (previousState, payload:number) => ({
       isLiked: !previousState.isLiked,
-      likeCount: previousState.isLiked ? previousState.likeCount - 1 : previousState.likeCount + 1,
+      likeCount: previousState.isLiked ? previousState.likeCount - payload : previousState.likeCount + payload,
     })
   );
   const onClick = async () => {
     startTransition(async () => {
-      // reducerFn(undefined);
+      reducerFn(555);
       if (isLiked) {
         await dislikePost(postId);
       } else {
