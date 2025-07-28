@@ -33,7 +33,7 @@ export const metadata = {
 
 export default async function Life() {
 
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
   
   const posts = await getPosts();
   return (

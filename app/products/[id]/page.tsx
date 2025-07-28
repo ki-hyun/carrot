@@ -2,10 +2,10 @@ import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { formatToWon } from "@/lib/utils";
 import { UserIcon } from "@heroicons/react/24/solid";
-// import Image from "next/image";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { unstable_cache, revalidateTag } from "next/cache";
+
+// import Image from "next/image";
 
 //// 이 함수 쓰면 정적 빌드하라고 요청함
 //// static 으로 빌드하려고 할때 미리 list 받아오기
@@ -51,6 +51,27 @@ async function getProduct(id: number) {
   });
   return product;
 }
+
+const createChatRoom = async (productUserId: number) => {
+  "use server";
+  const session = await getSession();
+
+  console.log(productUserId,session.id)
+
+  const room = await db.ChatRoom.create({
+    data: {
+      users: {
+        connect: [
+          { id: productUserId, }, { id: session.id, },
+        ],
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
+  redirect(`/chats/${room.id}`);
+};
 
 const getCachedProduct = unstable_cache(getProduct, ["product-detail"], {
   tags: ["product-detail", "xxxx"],
@@ -169,12 +190,17 @@ export default async function Products({ params }: { params: Promise<{ id: strin
             Delete product
           </button>
         ) : null}
-        <Link
+        {/* <Link
           className="bg-orange-500 px-5 py-2.5 rounded-md text-white font-semibold"
           href={``}
         >
           채팅하기
-        </Link>
+        </Link> */}
+        <form action={createChatRoom.bind(null, product.userId)}>
+          <button className="bg-orange-500 px-5 py-2.5 rounded-md text-white font-semibold">
+            채팅하기
+          </button>
+        </form>
       </div>
     </div>
   );
