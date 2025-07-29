@@ -58,7 +58,7 @@ const createChatRoom = async (productUserId: number) => {
 
   console.log(productUserId,session.id)
 
-  const room = await db.ChatRoom.create({
+  const room = await db.chatRoom.create({
     data: {
       users: {
         connect: [
