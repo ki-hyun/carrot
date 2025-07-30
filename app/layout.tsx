@@ -1,17 +1,32 @@
 import type { Metadata } from "next";
 // import { Geist, Geist_Mono, Inter } from "next/font/google";
-import { Inter } from "next/font/google";
+// import { Inter } from "next/font/google";
+import { Geist, Geist_Mono, Roboto, Rubik_Scribble, Inter } from "next/font/google";
 import "./globals.css";
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
 
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal"],
+  variable: "--roboto-text",
+});
+
+const rubick = Rubik_Scribble({
+  weight: "400",
+  style: "normal",
+  subsets: ["latin"],
+  variable: "--rubick-text",
+});
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,7 +50,8 @@ export default function RootLayout(props: CustomLayoutProps) {
   return (
     <html lang="en">
       <body
-        className={`${inter.className} bg-neutral-900 text-white max-w-screen-sm mx-auto`}
+        // className={`${inter.className} bg-neutral-900 text-white max-w-screen-sm mx-auto`}
+        className={`${inter.className} ${roboto.variable} ${rubick.variable} bg-neutral-900 text-white max-w-screen-sm mx-auto`}
       >
         {potato}
         {children}

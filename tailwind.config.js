@@ -7,6 +7,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        roboto: "var(--roboto-text)",
+        rubick: "var(--rubick-text)",
+      },
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',

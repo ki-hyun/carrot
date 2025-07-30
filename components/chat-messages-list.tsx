@@ -29,7 +29,7 @@ export default function ChatMessagesList({
 }: ChatMessageListProps) {
 
   // console.log("ChatMessagesList({")
-
+  
   const [messages, setMessages] = useState(initialMessages);
   const [message, setMessage] = useState("");
   // const channel = useRef<RealtimeChannel>();
